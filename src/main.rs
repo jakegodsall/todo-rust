@@ -1,5 +1,8 @@
-use chrono::{DateTime, Local};
+mod models;
+
 use std::io;
+
+use models::todo::ToDoItem;
 
 fn main() {
     let mut id_counter: u32 = 1;
@@ -19,27 +22,7 @@ fn main() {
         let item: ToDoItem = ToDoItem::create(id_counter, &title, &description);
         id_counter += 1;
 
-        println!("Added item: #{}: {} - {} (Created: {})", item.id, item.title, item.description, item.created_date);
+        println!("Added item: #{}: {} - {} (Created: {})", item.id, item.title, item.description, item.created_at);
         items.push(item);
-    }
-}
-
-struct ToDoItem {
-    id: u32,
-    title: String,
-    description: String,
-    created_date: DateTime<Local>,
-    completed_date: Option<DateTime<Local>> 
-}
-
-impl ToDoItem {
-    fn create(id: u32, title: &str, description: &str) -> Self {
-        ToDoItem {
-            id: id,
-            title: title.to_string(),
-            description: description.to_string(),
-            created_date: Local::now(),
-            completed_date: None
-        }
     }
 }
