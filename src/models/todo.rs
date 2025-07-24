@@ -22,4 +22,12 @@ impl ToDoItem {
     pub fn string_repr(&self) -> String {
         format!("To Do #{}: {} - {}", self.id, self.title, self.description)
     }
+
+    pub fn complete(&mut self) {
+        self.completed_at = Some(Local::now())
+    }
+
+    pub fn is_complete(&self) -> bool {
+        self.completed_at.is_some()
+    }
 }

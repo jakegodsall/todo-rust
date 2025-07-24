@@ -10,5 +10,5 @@ fn main() {
     items.push(ToDoItem::create(1, "Learn Rust", "Learn to program the Rust programming language"));
     items.push(ToDoItem::create(2, "Learn Korean", "Learn to speak fluently in the Korean language"));
     
-    cli::handler::print_todos(&items);
+    cli::handler::print_todos(&mut items);
 }
