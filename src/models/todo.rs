@@ -5,7 +5,7 @@ pub struct ToDoItem {
     pub title: String,
     pub description: String,
     pub created_at: DateTime<Local>,
-    pub completed_at: Option<Local>
+    pub completed_at: Option<DateTime<Local>>
 }
 
 impl ToDoItem {
@@ -17,5 +17,9 @@ impl ToDoItem {
             created_at: Local::now(),
             completed_at: None,
         }
+    }
+
+    pub fn string_repr(&self) -> String {
+        format!("To Do #{}: {} - {}", self.id, self.title, self.description)
     }
 }
