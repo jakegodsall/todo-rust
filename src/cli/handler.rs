@@ -17,12 +17,19 @@ pub fn checkbox(condition: bool) -> &'static str {
 }
 
 pub fn show_options() {
+    let options: Vec<String> = vec![
+        String::from("View todo items"),
+        String::from("Add todo item"),
+        String::from("Check off a todo item"),
+        String::from("Delete a todo item"),
+        String::from("Quit"),
+    ];
+
     println!("----- WELCOME -----");
     println!("Select an option: ");
-    println!("1. View todo items");
-    println!("2. Add a todo item");
-    println!("3. Check off a todo item");
-    println!("4. Quit");
+    for (idx, option) in options.iter().enumerate() {
+        println!("{}. {}", idx+1, option);
+    }
 }
 
 pub fn get_option(valid_options: &[i32]) -> i32 
@@ -59,6 +66,24 @@ pub fn complete_todo(todos: &mut Vec<ToDoItem>) {
     let index = (selected - 1) as usize;
 
     todos[index].complete();
+    print_todos(todos);
+}
+
+pub fn delete_todo(todos: &mut Vec<ToDoItem>) {
+    if todos.is_empty() {
+        println!("No todos to delete");
+        return;
+    }
+
+    println!("Select a todo to delete: ");
+    print_todos(todos);
+
+    let valid_options: Vec<i32> = (1..=todos.len() as i32).collect();
+    let selected = get_option(&valid_options);
+
+    let index = (selected - 1) as usize;
+
+    todos.remove(index);
     print_todos(todos);
 }
 
