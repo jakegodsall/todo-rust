@@ -16,14 +16,8 @@ pub fn checkbox(condition: bool) -> &'static str {
     }
 }
 
-pub fn show_options() {
-    let options: Vec<String> = vec![
-        String::from("View todo items"),
-        String::from("Add todo item"),
-        String::from("Check off a todo item"),
-        String::from("Delete a todo item"),
-        String::from("Quit"),
-    ];
+pub fn show_options(options: &Vec<String>) {
+
 
     println!("----- WELCOME -----");
     println!("Select an option: ");
@@ -88,6 +82,13 @@ pub fn delete_todo(todos: &mut Vec<ToDoItem>) {
 }
 
 pub fn main_loop() {
+    let options: Vec<String> = vec![
+        String::from("View todo items"),
+        String::from("Add todo item"),
+        String::from("Check off a todo item"),
+        String::from("Delete a todo item"),
+        String::from("Quit"),
+    ];
 
     let mut items: Vec<ToDoItem> = Vec::new();
     let mut id_counter: u32 = 3;
@@ -96,9 +97,9 @@ pub fn main_loop() {
     items.push(ToDoItem::create(2, "Learn Korean", "Learn to speak fluently in the Korean language"));
     
     loop {
-        show_options();
+        show_options(&options);
 
-        let valid_options = [1, 2, 3, 4];
+        let valid_options: Vec<i32> = (1..=options.len() as i32).collect();
         let user_input = get_option(&valid_options);
         
         match user_input {
@@ -111,7 +112,8 @@ pub fn main_loop() {
                 items.push(item);
             },
             3 => complete_todo(&mut items),
-            4 => {
+            4 => delete_todo(&mut items),
+            5 => {
                 println!("Goodbye");
                 process::exit(0);
             }
