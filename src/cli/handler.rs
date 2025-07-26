@@ -41,14 +41,9 @@ pub fn get_option() -> i32 {
     loop {
         let mut selected_option = String::new();
         io::stdin().read_line(&mut selected_option).expect("Line could not be read");
-        let selected_option: i32 = selected_option.trim().parse().unwrap_or(-1);
-
-        if selected_option == -1 {
-            continue
-        }
-
-        if valid_options.contains(&selected_option) {
-            return selected_option
+        match selected_option.trim().parse::<i32>() {
+            Ok(num) if valid_options.contains(&num) => return num,
+            _ => println!("Please enter a valid option: {:?}", valid_options),
         }
     }
 }
