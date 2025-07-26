@@ -44,6 +44,24 @@ pub fn get_string_input(field: &str) -> String {
     value.trim().to_string()
 }
 
+pub fn complete_todo(todos: &mut Vec<ToDoItem>) {
+    if todos.is_empty() {
+        println!("No todos to complete.");
+        return;
+    }
+
+    println!("Select a todo to complete: ");
+    print_todos(todos);
+
+    let valid_options: Vec<i32> = (1..=todos.len() as i32).collect();
+    let selected = get_option(&valid_options);
+
+    let index = (selected - 1) as usize;
+
+    todos[index].complete();
+    print_todos(todos);
+}
+
 pub fn main_loop() {
 
     let mut items: Vec<ToDoItem> = Vec::new();
@@ -52,7 +70,6 @@ pub fn main_loop() {
     items.push(ToDoItem::create(1, "Learn Rust", "Learn to program the Rust programming language"));
     items.push(ToDoItem::create(2, "Learn Korean", "Learn to speak fluently in the Korean language"));
     
-
     loop {
         show_options();
 
@@ -67,7 +84,8 @@ pub fn main_loop() {
                 let item = ToDoItem::create(id_counter, &title, &description);
                 id_counter += 1;
                 items.push(item);
-            }
+            },
+            3 => complete_todo(&mut items),
             4 => {
                 println!("Goodbye");
                 process::exit(0);
