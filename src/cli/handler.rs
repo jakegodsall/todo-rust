@@ -1,20 +1,10 @@
-use std::io;
+use std::{io, process};
 
 use crate::models::todo::ToDoItem;
 
-pub fn print_todos(todos: &mut Vec<ToDoItem>) {
+pub fn print_todos(todos: &Vec<ToDoItem>) {
     for todo in todos.iter() {
-        println!("{}", todo.string_repr());
-        println!("{}", checkbox(todo.is_complete()));
-    }
-
-    if let Some(todo) = todos.get_mut(0) {
-        todo.complete();
-    }
-
-    for todo in todos.iter() {
-        println!("{}", todo.string_repr());
-        println!("{}", checkbox(todo.is_complete()));
+        println!("{}: {}", todo.string_repr(), checkbox(todo.is_complete()));
     }
 }
 
@@ -32,12 +22,11 @@ pub fn show_options() {
     println!("1. View todo items");
     println!("2. Add a todo item");
     println!("3. Check off a todo item");
-    println!("Quit");
+    println!("4. Quit");
 }
 
-pub fn get_option() -> i32 {
-    let valid_options = vec![1, 2, 3];
-
+pub fn get_option(valid_options: &[i32]) -> i32 
+{
     loop {
         let mut selected_option = String::new();
         io::stdin().read_line(&mut selected_option).expect("Line could not be read");
@@ -49,20 +38,27 @@ pub fn get_option() -> i32 {
 }
 
 pub fn main_loop() {
-    show_options();
+
+    let mut items: Vec<ToDoItem> = Vec::new();
+    // let mut id_counter: u32 = 3;
+
+    items.push(ToDoItem::create(1, "Learn Rust", "Learn to program the Rust programming language"));
+    items.push(ToDoItem::create(2, "Learn Korean", "Learn to speak fluently in the Korean language"));
+    
 
     loop {
-        let mut selected_option = String::new();
-        io::stdin().read_line(&mut selected_option).expect("Line could not be read");
-        let selected_option = selected_option.trim().to_string();
+        show_options();
 
-        let selected_option: i32 = selected_option.parse().unwrap();
-
-        let mut valid_options = vec![1, 2, 3];
-
-        if valid_options.contains(&selected_option) {
-
-        }
+        let valid_options = [1, 2, 3, 4];
+        let user_input = get_option(&valid_options);
         
+        match user_input {
+            1 => print_todos(&items),
+            4 => {
+                println!("Goodbye");
+                process::exit(0);
+            }
+            _ => println!("Great!"),
+        }
     }
 }
