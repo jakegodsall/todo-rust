@@ -37,10 +37,23 @@ pub fn get_option(valid_options: &[i32]) -> i32
     }
 }
 
+pub fn get_string_input(field: &str) -> String {
+    println!("Enter a {}", field);
+    let mut value = String::new();
+    io::stdin().read_line(&mut value).expect("Input could not be read");
+    value.trim().to_string()
+}
+
+pub fn create_item() -> ToDoItem {
+    let title = get_string_input("title");
+    let description = get_string_input("description");
+
+    ToDoItem::create(1, &title, &description)
+}
+
 pub fn main_loop() {
 
     let mut items: Vec<ToDoItem> = Vec::new();
-    // let mut id_counter: u32 = 3;
 
     items.push(ToDoItem::create(1, "Learn Rust", "Learn to program the Rust programming language"));
     items.push(ToDoItem::create(2, "Learn Korean", "Learn to speak fluently in the Korean language"));
@@ -54,6 +67,10 @@ pub fn main_loop() {
         
         match user_input {
             1 => print_todos(&items),
+            2 => {
+                let item = create_item();
+                items.push(item);
+            }
             4 => {
                 println!("Goodbye");
                 process::exit(0);
