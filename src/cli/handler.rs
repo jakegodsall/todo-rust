@@ -3,9 +3,11 @@ use std::{io, process};
 use crate::models::todo::ToDoItem;
 
 pub fn print_todos(todos: &Vec<ToDoItem>) {
+    println!("----- TODOS -----");
     for todo in todos.iter() {
         println!("{}: {}", todo.string_repr(), checkbox(todo.is_complete()));
     }
+    println!("\n");
 }
 
 pub fn checkbox(condition: bool) -> &'static str {
@@ -17,8 +19,6 @@ pub fn checkbox(condition: bool) -> &'static str {
 }
 
 pub fn show_options(options: &Vec<String>) {
-
-
     println!("----- WELCOME -----");
     println!("Select an option: ");
     for (idx, option) in options.iter().enumerate() {
