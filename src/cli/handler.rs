@@ -1,6 +1,7 @@
 use std::{io, process};
 
 use crate::models::todo::ToDoItem;
+use crate::export::plaintext::export;
 
 pub fn print_todos(todos: &Vec<ToDoItem>) {
     println!("----- TODOS -----");
@@ -87,6 +88,7 @@ pub fn main_loop() {
         String::from("Add todo item"),
         String::from("Check off a todo item"),
         String::from("Delete a todo item"),
+        String::from("Export"),
         String::from("Quit"),
     ];
 
@@ -114,6 +116,10 @@ pub fn main_loop() {
             3 => complete_todo(&mut items),
             4 => delete_todo(&mut items),
             5 => {
+                let filename = get_string_input("filename");
+                export(&filename, &items);
+            },
+            6 => {
                 println!("Goodbye");
                 process::exit(0);
             }
