@@ -7,6 +7,7 @@ pub fn export(filename: &str, todos: &Vec<ToDoItem>) {
     let mut writer = BufWriter::new(file);
 
     for todo in todos {
-        writeln!(writer, "{}", todo.string_repr());
+        writeln!(writer, "{}", todo.string_repr())
+            .expect("Failed to write to file");
     }
 }
