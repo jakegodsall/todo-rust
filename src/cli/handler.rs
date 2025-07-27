@@ -117,7 +117,8 @@ pub fn main_loop() {
             4 => delete_todo(&mut items),
             5 => {
                 let filename = get_string_input("filename");
-                export(&filename, &items);
+                export(&filename, &items)
+                    .expect("Failed to export ToDo items");
             },
             6 => {
                 println!("Goodbye");
