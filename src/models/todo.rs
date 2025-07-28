@@ -10,7 +10,7 @@ pub struct ToDoItem {
     #[serde(with = "datetime_format")]
     pub created_at: DateTime<Local>,
 
-    #[serde(with = "datetime_format")]
+    #[serde(serialize_with = "datetime_format::serialize_option")]
     pub completed_at: Option<DateTime<Local>>
 }
 
