@@ -52,7 +52,7 @@ mod datetime_format {
         S: Serializer,
     {
         let s = date.format(FORMAT).to_string();
-        serializer.serialize_str(&s);
+        serializer.serialize_str(&s)
     }
 
     pub fn serialize_option<S> (
