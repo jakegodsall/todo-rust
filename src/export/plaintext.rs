@@ -1,5 +1,5 @@
 use crate::models::todo::{ ToDoItem };
-use std::fs::{ File, OpenOptions };
+use std::fs::{ OpenOptions };
 use std::io::{ Write, BufWriter };
 
 pub fn export(filename: &str, todos: &Vec<ToDoItem>) -> std::io::Result<()> {
