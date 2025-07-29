@@ -82,7 +82,7 @@ pub fn delete_todo(todos: &mut Vec<ToDoItem>) {
     print_todos(todos);
 }
 
-pub fn export(todos: &Vec<ToDoItem>) {
+pub fn export(todos: &Vec<ToDoItem>) -> bool {
     let options: Vec<String> = vec![
         String::from("Plaintext"),
         String::from("CSV"),
@@ -93,8 +93,17 @@ pub fn export(todos: &Vec<ToDoItem>) {
     let user_input = get_option(&valid_options);
 
     match user_input {
-        1 => plaintext_export("todos.txt", &todos),
-        2 => csv_export("todos.csv", &todos),
+        1 => {
+            plaintext_export("todos.txt", &todos)
+                .expect("Failed");
+            true
+            },
+        2 => {
+            csv_export("todos.csv", &todos)
+                .expect("Failed");
+            true
+            },
+        _ => false
     }
 }
 
@@ -134,10 +143,7 @@ pub fn main_loop() {
             3 => complete_todo(&mut items),
             4 => delete_todo(&mut items),
             5 => {
-
-                let filename = get_string_input("filename");
-                export(&filename, &items)
-                    .expect("Failed to export ToDo items");
+                export(&items);
             },
             6 => {
                 println!("Goodbye");

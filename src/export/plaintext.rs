@@ -1,8 +1,9 @@
 use crate::models::todo::{ ToDoItem };
 use std::fs::{ OpenOptions };
+use std::error::Error;
 use std::io::{ Write, BufWriter };
 
-pub fn export(filename: &str, todos: &Vec<ToDoItem>) -> std::io::Result<()> {
+pub fn export(filename: &str, todos: &Vec<ToDoItem>) -> Result<(), Box<dyn Error>> {
     let file = OpenOptions::new()
         .write(true)
         .create(true)
