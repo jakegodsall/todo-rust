@@ -1,7 +1,8 @@
 use std::{io, process};
 
 use crate::models::todo::ToDoItem;
-use crate::export::plaintext::export;
+use crate::export::plaintext::export as plaintext_export;
+use crate::export::csv::export as csv_export;
 
 pub fn print_todos(todos: &Vec<ToDoItem>) {
     println!("----- TODOS -----");
@@ -20,7 +21,6 @@ pub fn checkbox(condition: bool) -> &'static str {
 }
 
 pub fn show_options(options: &Vec<String>) {
-    println!("----- WELCOME -----");
     println!("Select an option: ");
     for (idx, option) in options.iter().enumerate() {
         println!("{}. {}", idx+1, option);
@@ -82,6 +82,22 @@ pub fn delete_todo(todos: &mut Vec<ToDoItem>) {
     print_todos(todos);
 }
 
+pub fn export(todos: &Vec<ToDoItem>) {
+    let options: Vec<String> = vec![
+        String::from("Plaintext"),
+        String::from("CSV"),
+    ];
+
+    show_options(&options);
+    let valid_options: Vec<i32> = (1..=options.len() as i32).collect();
+    let user_input = get_option(&valid_options);
+
+    match user_input {
+        1 => plaintext_export("todos.txt", &todos),
+        2 => csv_export("todos.csv", &todos),
+    }
+}
+
 pub fn main_loop() {
     let options: Vec<String> = vec![
         String::from("View todo items"),
@@ -98,6 +114,8 @@ pub fn main_loop() {
     items.push(ToDoItem::create(1, "Learn Rust", "Learn to program the Rust programming language"));
     items.push(ToDoItem::create(2, "Learn Korean", "Learn to speak fluently in the Korean language"));
     
+    println!("----- WELCOME -----");
+
     loop {
         show_options(&options);
 
@@ -116,6 +134,7 @@ pub fn main_loop() {
             3 => complete_todo(&mut items),
             4 => delete_todo(&mut items),
             5 => {
+
                 let filename = get_string_input("filename");
                 export(&filename, &items)
                     .expect("Failed to export ToDo items");
