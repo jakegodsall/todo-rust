@@ -3,6 +3,7 @@ use std::{io, process};
 use crate::models::todo::ToDoItem;
 use crate::export::plaintext::export as plaintext_export;
 use crate::export::csv::export as csv_export;
+use crate::repositories::todo::{ ToDoRepository };
 
 pub fn print_todos(todos: &Vec<ToDoItem>) {
     println!("----- TODOS -----");
@@ -116,6 +117,8 @@ pub fn main_loop() {
         String::from("Export"),
         String::from("Quit"),
     ];
+
+    let todo_repository = ToDoRepository::open("test.db");
 
     let mut items: Vec<ToDoItem> = Vec::new();
     let mut id_counter: u32 = 3;
