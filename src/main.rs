@@ -4,6 +4,6 @@ mod export;
 mod db;
 
 fn main() {
-    db::schema::define();
+    db::setup::define();
     cli::handler::main_loop();
 }
