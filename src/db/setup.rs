@@ -23,7 +23,7 @@ pub fn define() {
         .unwrap();
 
     let query = "
-        CREATE TABLE todo (
+        CREATE TABLE todos (
             title TEXT,
             description TEXT,
             created_at TEXT,
