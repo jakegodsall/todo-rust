@@ -1,5 +1,5 @@
 use chrono::{ DateTime, Local };
-use serde::Serialize;
+use serde::{ Serialize };
 
 #[derive(Serialize)]
 pub struct ToDoItem {
@@ -39,8 +39,8 @@ impl ToDoItem {
 }
 
 mod datetime_format {
-    use chrono::{ DateTime, Local, TimeZone };
-    use serde::{ self, Serializer, Deserializer };
+    use chrono::{ DateTime, Local };
+    use serde::{ self, Serializer };
 
     const FORMAT: &str = "%Y-%m-%d %H:%M:%S";
 
