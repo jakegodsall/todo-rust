@@ -26,6 +26,9 @@ impl ToDoRepository {
             let created_at = Local
                 .from_local_datetime(&naive)
                 .single()?;
+
+            let completed_at_str: Option<String> = stmt.read(4)?;
+            
             
             let item = ToDoItem {
                 id: stmt.read::<i64, usize>(0)?,
