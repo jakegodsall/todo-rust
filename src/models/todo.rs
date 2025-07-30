@@ -3,7 +3,7 @@ use serde::{ Serialize };
 
 #[derive(Serialize)]
 pub struct ToDoItem {
-    pub id: u32,
+    pub id: i64,
     pub title: String,
     pub description: String,
 
@@ -15,7 +15,7 @@ pub struct ToDoItem {
 }
 
 impl ToDoItem {
-    pub fn create(id: u32, title: &str, description: &str) -> Self {
+    pub fn create(id: i64, title: &str, description: &str) -> Self {
         ToDoItem {
             id,
             title: title.to_string(),

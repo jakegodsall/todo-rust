@@ -120,12 +120,6 @@ pub fn main_loop() {
 
     let todo_repository = ToDoRepository::open("test.db");
 
-    let mut items: Vec<ToDoItem> = Vec::new();
-    let mut id_counter: u32 = 3;
-
-    items.push(ToDoItem::create(1, "Learn Rust", "Learn to program the Rust programming language"));
-    items.push(ToDoItem::create(2, "Learn Korean", "Learn to speak fluently in the Korean language"));
-    
     println!("----- WELCOME -----");
 
     loop {
@@ -135,7 +129,10 @@ pub fn main_loop() {
         let user_input = get_option(&valid_options);
         
         match user_input {
-            1 => print_todos(&items),
+            1 => {
+                let items = todo_repository.get_all().unwrap();
+                print_todos(&items);
+            },
             2 => {
                 let title = get_string_input("title");
                 let description = get_string_input("description");

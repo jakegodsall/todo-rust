@@ -1,5 +1,5 @@
-use sqlite::{ Connection, State };
-use chrono::{ Local };
+use sqlite::{ Connection, State, Error };
+use chrono::{ DateTime, Local, NaiveDateTime, TimeZone };
 use crate::models::todo::ToDoItem;
 
 pub struct ToDoRepository {
@@ -7,19 +7,40 @@ pub struct ToDoRepository {
 }
 
 impl ToDoRepository {
-    fn open(&self, db: &str) -> Self {
+    pub fn open(db: &str) -> Self {
         Self {
             conn: sqlite::open(db).unwrap()
         }
     }
     
-    fn get_all(&self) -> Result<Vec<ToDoItem>> {
-        let stmt = "SELECT * FROM todos";
+    pub fn get_all(&self) -> Result<Vec<ToDoItem>> {
+        let mut stmt = self.conn.prepare(
+                    "SELECT id, title, description, created_at FROM todos ORDER BY id ASC",
+                )?;
 
-        self.conn.execute(stmt);
+        let mut items = Vec::new();
+
+        while let State::Row = stmt.next()? {
+            let created_at_str: String = stmt.read(3)?;
+            let naive = NaiveDateTime::parse_from_str(&created_at_str, "%Y-%m-%d %H:%M:%S")?;
+            let created_at = Local
+                .from_local_datetime(&naive)
+                .single()?;
+            
+            let item = ToDoItem {
+                id: stmt.read::<i64, usize>(0)?,
+                title: stmt.read::<String, usize>(1)?,
+                description: stmt.read::<String, usize>(2)?,
+                created_at: created_at,
+            }
+
+            items.push(item);
+        }
+
+        Ok(items)
     }
 
-    fn create(&self, todo: &ToDoItem) -> Result<i64> {
+    pub fn create(&self, todo: &ToDoItem) -> Result<i64> {
         let mut stmt = self
             .conn
             .prepare("INSERT INTO todos (title, description, created_at) VALUES (?, ?, ?);")?;
