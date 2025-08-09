@@ -1,3 +1,4 @@
+use crate::utils::db_time::{ parse_local };
 use sqlite::{ Connection, State };
 use chrono::{ Local, NaiveDateTime, TimeZone };
 use crate::models::todo::ToDoItem;
@@ -71,6 +72,30 @@ impl ToDoRepository {
         match stmt.next()? {
             State::Done => Ok(1),
             State::Row => unreachable!("INSERT should not return rows"),
+        }
+    }
+
+    pub fn get_by_id(&self, id: i64) -> Result<ToDoItem, Box<dyn std::error::Error>> {
+        let mut stmt = self
+            .conn
+            .prepare("SELECT id, title, description, created_at, completed_at FROM todos WHERE id = ?")?;
+
+        stmt.bind((1, id));
+
+        match stmt.next()? {
+            State::Done => {
+                let created_at = parse_local(stmt.read::<String, usize>(3).as_str());
+                let completed_at = parse_local(stmt.read::<String, usize>(4).as_str());
+
+                let todo = ToDoItem {
+                    id: stmt.read::<i64, usize>(0)?,
+                    title: stmt.read::<String, usize>(1)?,
+                    description: stmt.read::<String, usize>(2)?,
+                    created_at: created_at.unwrap(),
+
+                }
+            },
+            State::Row => unreachable!(""),
         }
     }
 }
