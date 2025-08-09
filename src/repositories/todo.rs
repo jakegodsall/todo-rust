@@ -1,6 +1,6 @@
-use crate::utils::db_time::{ parse_local };
+use crate::utils::db_time::{ parse_local, DB_DATETIME_FMT };
 use sqlite::{ Connection, State };
-use chrono::{ Local, NaiveDateTime, TimeZone };
+use chrono::{ Local, NaiveDate, NaiveDateTime, TimeZone };
 use crate::models::todo::ToDoItem;
 
 pub struct ToDoRepository {
@@ -82,20 +82,42 @@ impl ToDoRepository {
 
         stmt.bind((1, id));
 
-        match stmt.next()? {
-            State::Done => {
-                let created_at = parse_local(stmt.read::<String, usize>(3).as_str());
-                let completed_at = parse_local(stmt.read::<String, usize>(4).as_str());
+        if let State::Row = stmt.next()? {
+                let created_at_str = stmt.read(3)?;
+                let naive_created_at = NaiveDateTime::parse_from_str(created_at_str, DB_DATETIME_FMT)?;
+                let created_at = Local
+                    .from_local_datetime(&naive_created_at)
+                    .single()
+                    .or_else(|| Local.from_local_datetime(&naive_created_at).earliest())
+                    .or_else(|| Local.from_local_datetime(&naive_created_at).latest())
+                    .ok_or("nonexistent local time")?;
 
-                let todo = ToDoItem {
-                    id: stmt.read::<i64, usize>(0)?,
-                    title: stmt.read::<String, usize>(1)?,
-                    description: stmt.read::<String, usize>(2)?,
-                    created_at: created_at.unwrap(),
+                let completed_at_str = stmt.read(4)?;
+                let completed_at: Option<DateTime<Local>> = match completed_at_str {
+                    Some(s) => {
+                        let d = NaiveDate::parse_from_str(&s, "%Y-%m-%d")?;
+                        let naive_midnight = d.and_hms_opt(0, 0, 0).ok_or("invalid midnight time")?;
+                        Some(
+                            Local
+                                .from_local_datetime(&naive_midnight)
+                                .single()
+                                .or_else(|| Local.from_local_datetime(&naive_midnight).earliest())
+                                .or_else(|| Local.from_local_datetime(&naive_midnight).latest())
+                                .ok_or("nonexistent local time")?,
+                        )
+                    }
+                    None => None,
+                };
 
-                }
-            },
-            State::Row => unreachable!(""),
+                Ok(ToDoItem {
+                    id: stmt.read::<i64, _>(0)?,
+                    title: stmt.read::<String, _>(1)?,
+                    description: stmt.read::<String, _>(2)?,
+                    created_at,
+                    completed_at,
+                })
+        } else {
+            Err("todo not found".into())
         }
-    }
+    }   
 }
