@@ -1,3 +1,4 @@
+use thiserror::Error;
 use sqlite::{ Connection, State, Error };
 use chrono::{ DateTime, Local, NaiveDate, NaiveDateTime, TimeZone };
 use crate::models::todo::ToDoItem;
@@ -13,7 +14,7 @@ impl ToDoRepository {
         }
     }
     
-    pub fn get_all(&self) -> Result<Vec<ToDoItem>> {
+    pub fn get_all(&self) -> Result<Vec<ToDoItem>, Box<dyn std::error::Error>> {
         let mut stmt = self.conn.prepare(
                     "SELECT id, title, description, created_at FROM todos ORDER BY id ASC",
                 )?;
