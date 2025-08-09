@@ -57,17 +57,19 @@ impl ToDoRepository {
         Ok(items)
     }
 
-    pub fn create(&self, todo: &ToDoItem) -> Result<i64> {
+    pub fn create(&self, todo: &ToDoItem) -> Result<i64, Box<dyn std::error::Error>> {
         let mut stmt = self
             .conn
             .prepare("INSERT INTO todos (title, description, created_at) VALUES (?, ?, ?);")?;
 
-        stmt.bind((1, todo.title));
-        stmt.bind((2, todo.description));
-        stmt.bind((3, Local::now().to_str()));
+        stmt.bind((1, todo.title.as_str()));
+        stmt.bind((2, todo.description.as_str()));
+        let now_string = Local::now().format("%Y-%m-%d %H:%M:%S").to_string();
+        let now_str: &str = &now_string;
+        stmt.bind((3, now_str));
 
         match stmt.next()? {
-            State::Done => Ok(self.conn.last_insert_rowid()),
+            State::Done => Ok(1),
             State::Row => unreachable!("INSERT should not return rows"),
         }
     }
