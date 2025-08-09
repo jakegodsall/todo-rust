@@ -130,6 +130,9 @@ impl ToDoRepository {
         stmt.bind((1, now_str.as_str()));
         stmt.bind((2, id));
 
-        
+        match stmt.next()? {
+            State::Done => Ok(()),
+            State::Row => unreachable!("UPDATE should not return rows"),
+        }
     }
 }

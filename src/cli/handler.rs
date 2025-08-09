@@ -47,7 +47,7 @@ pub fn get_string_input(field: &str) -> String {
     value.trim().to_string()
 }
 
-pub fn complete_todo(todos: &mut Vec<ToDoItem>) {
+pub fn complete_todo() {
     if todos.is_empty() {
         println!("No todos to complete.");
         return;
