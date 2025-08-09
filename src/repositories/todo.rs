@@ -1,6 +1,6 @@
 use crate::utils::db_time::{ parse_local, DB_DATETIME_FMT };
 use sqlite::{ Connection, State };
-use chrono::{ Local, NaiveDate, NaiveDateTime, TimeZone };
+use chrono::{ Local, NaiveDate, NaiveDateTime, TimeZone, DateTime };
 use crate::models::todo::ToDoItem;
 
 pub struct ToDoRepository {
@@ -92,8 +92,8 @@ impl ToDoRepository {
                     .or_else(|| Local.from_local_datetime(&naive_created_at).latest())
                     .ok_or("nonexistent local time")?;
 
-                let completed_at_str = stmt.read(4)?;
-                let completed_at: Option<DateTime<Local>> = match completed_at_str {
+                let completed_at_str: Option<String> = stmt.read(4)?;
+                let completed_at: Option<DateTime<Local>> = match completed_at_str.as_deref() {
                     Some(s) => {
                         let d = NaiveDate::parse_from_str(&s, "%Y-%m-%d")?;
                         let naive_midnight = d.and_hms_opt(0, 0, 0).ok_or("invalid midnight time")?;
