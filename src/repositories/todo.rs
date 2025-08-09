@@ -120,4 +120,16 @@ impl ToDoRepository {
             Err("todo not found".into())
         }
     }   
+
+    pub fn complete_by_id(&self, id: i64) -> Result<(), Box<dyn std::error::Error>> {
+        let mut stmt = self
+            .conn
+            .prepare("UPDATE todos SET completed_at = ? WHERE id = ?")?;
+
+        let now_str = Local::now().format(DB_DATETIME_FMT).to_string();
+        stmt.bind((1, now_str.as_str()));
+        stmt.bind((2, id));
+
+        
+    }
 }

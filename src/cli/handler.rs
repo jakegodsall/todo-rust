@@ -138,7 +138,6 @@ pub fn main_loop() {
                 let description = get_string_input("description");
                 let todo = ToDoItem::create(5, &title, &description);
                 todo_repository.create(&todo);
-                
             },
             3 => complete_todo(&mut items),
             4 => delete_todo(&mut items),
