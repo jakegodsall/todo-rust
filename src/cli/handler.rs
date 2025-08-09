@@ -3,6 +3,7 @@ use std::{io, process};
 use crate::models::todo::ToDoItem;
 use crate::export::plaintext::export as plaintext_export;
 use crate::export::csv::export as csv_export;
+use crate::repositories;
 use crate::repositories::todo::{ ToDoRepository };
 
 pub fn print_todos(todos: &Vec<ToDoItem>) {
@@ -136,9 +137,9 @@ pub fn main_loop() {
             2 => {
                 let title = get_string_input("title");
                 let description = get_string_input("description");
-                let item = ToDoItem::create(id_counter, &title, &description);
-                id_counter += 1;
-                items.push(item);
+                let todo = ToDoItem::create(5, &title, &description);
+                todo_repository.create(&todo);
+                
             },
             3 => complete_todo(&mut items),
             4 => delete_todo(&mut items),
