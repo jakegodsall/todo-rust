@@ -1,4 +1,4 @@
-use crate::utils::db_time::{ parse_local, DB_DATETIME_FMT };
+use crate::utils::db_time::{ DB_DATETIME_FMT };
 use sqlite::{ Connection, State };
 use chrono::{ Local, NaiveDate, NaiveDateTime, TimeZone, DateTime };
 use crate::models::todo::ToDoItem;
@@ -83,8 +83,8 @@ impl ToDoRepository {
         stmt.bind((1, id));
 
         if let State::Row = stmt.next()? {
-                let created_at_str = stmt.read(3)?;
-                let naive_created_at = NaiveDateTime::parse_from_str(created_at_str, DB_DATETIME_FMT)?;
+                let created_at_str: String = stmt.read(3)?;
+                let naive_created_at = NaiveDateTime::parse_from_str(created_at_str.as_str(), DB_DATETIME_FMT)?;
                 let created_at = Local
                     .from_local_datetime(&naive_created_at)
                     .single()

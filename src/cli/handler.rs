@@ -3,7 +3,6 @@ use std::{io, process};
 use crate::models::todo::ToDoItem;
 use crate::export::plaintext::export as plaintext_export;
 use crate::export::csv::export as csv_export;
-use crate::repositories;
 use crate::repositories::todo::{ ToDoRepository };
 
 pub fn print_todos(todos: &Vec<ToDoItem>) {
