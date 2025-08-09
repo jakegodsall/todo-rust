@@ -1,4 +1,4 @@
-use chrono::{DateTime, Local, NaiveDateTime};
+use chrono::{DateTime, Local, MappedLocalTime, NaiveDateTime, ParseError};
 
 
 
@@ -8,8 +8,13 @@ pub fn fmt_local(dt: DateTime<Local>) -> String {
     dt.naive_local().format(DB_DATETIME_FMT).to_string()
 }
 
-pub fn parse_local(s: &str) -> DateTime<Local> {
+pub fn parse_local(s: &str) -> Result<DateTime<Local>, ParseError> {
     let naive = NaiveDateTime::parse_from_str(s, DB_DATETIME_FMT)?;
-    Local.from_local_datetime(&naive)
-        .single();
+    match naive.and_local_timezone(Local) {
+        MappedLocalTime::Single(dt) => Ok(dt),
+        MappedLocalTime::Ambiguous(_dt0, _dt1) => todo!(),
+        MappedLocalTime::None => panic!("invalid date/time"),
+    }
+
+
 }
