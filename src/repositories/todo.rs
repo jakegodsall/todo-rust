@@ -1,5 +1,5 @@
 use sqlite::{ Connection, State, Error };
-use chrono::{ DateTime, Local, NaiveDateTime, TimeZone };
+use chrono::{ DateTime, Local, NaiveDate, NaiveDateTime, TimeZone };
 use crate::models::todo::ToDoItem;
 
 pub struct ToDoRepository {
@@ -28,14 +28,27 @@ impl ToDoRepository {
                 .single()?;
 
             let completed_at_str: Option<String> = stmt.read(4)?;
-            
-            
+            let completed_at = Option<DateTime<Local>> = completed_at_str
+                .as_deref()
+                .map(|s| -> Result<DateTime<Local>, chrono::ParseError> {
+                    let date = NaiveDateTime::parse_from_str(s, "%Y-%m-%d");
+                    let naive = date.and_hms_opt(0, 0, 0).unwrap();
+                    let local = Local.from_local_datetime(&naive)
+                        .single()                              // exact match
+                        .or_else(|| Local.from_local_datetime(&naive).earliest()) // if ambiguous (DST)
+                        .or_else(|| Local.from_local_datetime(&naive).latest())   // fallback
+                        .expect("nonexistent local time");
+                    Ok(local)
+                })
+                .transpose()?;
+
             let item = ToDoItem {
                 id: stmt.read::<i64, usize>(0)?,
                 title: stmt.read::<String, usize>(1)?,
                 description: stmt.read::<String, usize>(2)?,
                 created_at: created_at,
-            }
+                completed_at: completed_at
+            };
 
             items.push(item);
         }
@@ -54,7 +67,7 @@ impl ToDoRepository {
 
         match stmt.next()? {
             State::Done => Ok(self.conn.last_insert_rowid()),
-            Stade::Row => unreachable!("INSERT should not return rows"),
+            State::Row => unreachable!("INSERT should not return rows"),
         }
     }
 }
