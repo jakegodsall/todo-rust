@@ -1,6 +1,5 @@
-use thiserror::Error;
-use sqlite::{ Connection, State, Error };
-use chrono::{ DateTime, Local, NaiveDate, NaiveDateTime, TimeZone };
+use sqlite::{ Connection, State };
+use chrono::{ Local, NaiveDateTime, TimeZone };
 use crate::models::todo::ToDoItem;
 
 pub struct ToDoRepository {
@@ -26,7 +25,8 @@ impl ToDoRepository {
             let naive = NaiveDateTime::parse_from_str(&created_at_str, "%Y-%m-%d %H:%M:%S")?;
             let created_at = Local
                 .from_local_datetime(&naive)
-                .single()?;
+                .single()
+                .ok_or(|e| panic!("{}", e));
 
             let completed_at_str: Option<String> = stmt.read(4)?;
             let completed_at = Option<DateTime<Local>> = completed_at_str
